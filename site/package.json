@@ -1,0 +1,22 @@
+{
+  "private": true,
+  "name": "site",
+  "description": "Test site for testing gatsby-plugin-material-symbols",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "clean": "gatsby clean",
+    "build": "gatsby build",
+    "develop": "gatsby develop",
+    "serve": "gatsby serve"
+  },
+  "dependencies": {
+    "gatsby": "^5.13.7",
+    "gatsby-plugin-image": "^3.13.1",
+    "gatsby-plugin-sharp": "^5.13.1",
+    "gatsby-source-filesystem": "^5.13.1",
+    "gatsby-transformer-sharp": "^5.13.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}

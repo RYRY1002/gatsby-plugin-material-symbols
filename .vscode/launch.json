@@ -1,0 +1,83 @@
+{
+  "version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Develop site & plugin",
+			"type": "node",
+			"request": "launch",
+			"runtimeExecutable": "yarn",
+			"cwd": "${workspaceFolder}",
+			"runtimeArgs": ["develop"],
+			"env": {
+				"PARCEL_WORKERS": "0",
+				"GATSBY_CPU_COUNT": "4",
+			},
+			"console": "integratedTerminal"
+		},
+		{
+			"name": "Develop site",
+			"type": "node",
+			"request": "launch",
+			"runtimeExecutable": "yarn",
+			"cwd": "${workspaceFolder}",
+			"runtimeArgs": ["develop:site"],
+			"env": {
+				"PARCEL_WORKERS": "0",
+				"GATSBY_CPU_COUNT": "4",
+			},
+			"console": "integratedTerminal"
+		},
+		{
+			"name": "Develop plugin",
+			"type": "node",
+			"request": "launch",
+			"runtimeExecutable": "yarn",
+			"cwd": "${workspaceFolder}",
+			"runtimeArgs": ["develop:plugin"],
+			"env": {
+				"PARCEL_WORKERS": "0",
+				"GATSBY_CPU_COUNT": "4",
+			},
+			"console": "integratedTerminal"
+		},
+		{
+			"name": "Build site & plugin",
+			"type": "node",
+			"request": "launch",
+			"runtimeExecutable": "yarn",
+			"cwd": "${workspaceFolder}",
+			"runtimeArgs": ["build"],
+			"env": {
+				"PARCEL_WORKERS": "0",
+				"GATSBY_CPU_COUNT": "4",
+			},
+			"console": "integratedTerminal"
+		},
+		{
+			"name": "Build plugin",
+			"type": "node",
+			"request": "launch",
+			"runtimeExecutable": "yarn",
+			"cwd": "${workspaceFolder}",
+			"runtimeArgs": ["build:plugin"],
+			"env": {
+				"PARCEL_WORKERS": "0",
+				"GATSBY_CPU_COUNT": "4",
+			},
+			"console": "integratedTerminal"
+		},
+		{
+			"name": "Build site",
+			"type": "node",
+			"request": "launch",
+			"runtimeExecutable": "yarn",
+			"cwd": "${workspaceFolder}",
+			"runtimeArgs": ["build:site"],
+			"env": {
+				"PARCEL_WORKERS": "0",
+				"GATSBY_CPU_COUNT": "4",
+			},
+			"console": "integratedTerminal"
+		}
+	]
+}

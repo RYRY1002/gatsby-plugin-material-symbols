@@ -1,22 +1,10 @@
-import fetch, { HeadersInit } from "node-fetch"
-
-const headers = {
-  "Content-Type": `application/json`,
-} satisfies HeadersInit
+import type { Classes } from './types';
 
 /**
- * Fetch utility for requests to the example api.
- * You can use a GraphQL client module instead if you prefer a more full-featured experience.
- * @see https://graphql.org/code/#javascript-client
+ * Combines an array of classes into a single space delimited-string.
+ *
+ * @param classes List of input classes. Values are filtered out if they evaluate to `false`. See {@link Boolean}.
  */
-export async function fetchGraphQL<T>(endpoint: string, query: string): Promise<T> {
-  const response = await fetch(endpoint, {
-    method: `POST`,
-    headers,
-    body: JSON.stringify({
-      query,
-    }),
-  })
-
-  return await response.json()
+export function combineClasses(...classes: Classes): string {
+	return (classes.filter(Boolean) as string[]).map((c) => c.trim()).join(' ');
 }

@@ -1,11 +1,15 @@
 import * as React from "react"
 import { HeadFC, PageProps } from "gatsby"
+import { MaterialSymbol } from "plugin"
 
 export default function IndexPage({ data }: PageProps<any>): React.ReactElement {
   return (
     <main>
       <h1>All posts</h1>
       <section className="posts-grid">Posts will go here</section>
+      <MaterialSymbol icon="home"/>
+      <MaterialSymbol icon="settings" weight={700}/>
+      <MaterialSymbol icon="pinch" symbolStyle="rounded"/>
     </main>
   )
 }

@@ -1,9 +1,12 @@
 {
   "extends": "../tsconfig.json",
   "include": ["./src/**/*"],
+  "exclude": ["gatsby-node.js"],
   "compilerOptions": {
     "module": "CommonJS",
     "outDir": "./dist",
-    "declaration": true
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true
   }
 }

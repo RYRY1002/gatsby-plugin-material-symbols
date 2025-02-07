@@ -10,18 +10,24 @@
   ],
   "scripts": {
     "develop:plugin": "yarn workspace plugin develop",
+    "plugin:develop": "yarn workspace plugin develop",
     "develop:site": "yarn workspace site develop",
-    "develop:deps": "npm-run-all -l -p 'develop:plugin'",
+    "site:develop": "yarn workspace site develop",
     "build:plugin": "yarn workspace plugin build",
+    "plugin:build": "yarn workspace plugin build",
     "build:site": "yarn workspace site build",
+    "site:build": "yarn workspace site build",
     "build": "npm-run-all -s 'build:plugin' 'build:site'",
+    "serve": "yarn workspace site serve",
     "serve:site": "yarn workspace site serve",
     "lint": "eslint . --ext .ts,.tsx,.js",
     "lint:fix": "yarn lint --fix",
     "test": "yarn workspace plugin test",
-    "clean": "npm-run-all -p 'clean:*'",
+    "clean": "npm-run-all -p clean:plugin clean:site",
     "clean:plugin": "yarn workspace plugin clean",
-    "clean:site": "yarn workspace site clean"
+    "plugin:clean": "yarn workspace plugin clean",
+    "clean:site": "yarn workspace site clean",
+    "site:clean": "yarn workspace site clean"
   },
   "license": "MIT",
   "devDependencies": {

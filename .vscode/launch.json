@@ -20,7 +20,7 @@
 			"request": "launch",
 			"runtimeExecutable": "yarn",
 			"cwd": "${workspaceFolder}",
-			"runtimeArgs": ["develop:site"],
+			"runtimeArgs": ["develop:site", "--verbose"],
 			"env": {
 				"PARCEL_WORKERS": "0",
 				"GATSBY_CPU_COUNT": "4",
@@ -72,7 +72,7 @@
 			"request": "launch",
 			"runtimeExecutable": "yarn",
 			"cwd": "${workspaceFolder}",
-			"runtimeArgs": ["build:site"],
+			"runtimeArgs": ["build:site", "--verbose"],
 			"env": {
 				"PARCEL_WORKERS": "0",
 				"GATSBY_CPU_COUNT": "4",

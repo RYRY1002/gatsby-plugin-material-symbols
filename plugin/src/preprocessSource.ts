@@ -1,9 +1,14 @@
+import path from "path"
+import fs from "fs"
+
+import type { PreprocessSourceArgs, GatsbyNode, Page } from "gatsby";
 import traverse from "@babel/traverse"
 import { NodePath } from "@babel/core"
 import { JSXOpeningElement } from "@babel/types"
 import { parse, ParserOptions } from "@babel/parser"
 import babel from "@babel/core"
 import { getAttributeValues } from "babel-jsx-utils"
+import { fetchRemoteFile } from "gatsby-core-utils/fetch-remote-file";
 
 const PARSER_OPTIONS: ParserOptions = {
   allowImportExportEverywhere: true,
@@ -46,7 +51,7 @@ const PARSER_OPTIONS: ParserOptions = {
   ],
 };
 
-export function getBabelParserOptions(filePath: string): ParserOptions {
+function getBabelParserOptions(filePath: string): ParserOptions {
   // Flow and TypeScript plugins can't be enabled simultaneously
   if (/\.tsx?/.test(filePath)) {
     const { plugins } = PARSER_OPTIONS
@@ -71,7 +76,7 @@ export function babelParseToAst(
  * Traverses the parsed source, looking for MaterialSymbol components.
  * Extracts and returns the props from any that are found
  */
-export const extractProps = (
+const extractProps = (
   ast: babel.types.File,
   filename: string,
   onError?: (prop: string, nodePath: NodePath) => void
@@ -111,7 +116,7 @@ export const extractProps = (
   return props;
 };
 
-export const MATERIALSYMBOL_PROPS = new Set([
+const MATERIALSYMBOL_PROPS = new Set([
   "icon",
   "fill",
   "weight",
@@ -122,4 +127,68 @@ export const MATERIALSYMBOL_PROPS = new Set([
   "style",
   "as",
   "onClick"
-])
+]);
+
+let pathComponent: Record<string, string> = {};
+
+export const onCreatePage: GatsbyNode["onCreatePage"] = async ({ page }) => {
+  pathComponent[page.component] = page.path;
+}
+
+export const preprocessSource: GatsbyNode["preprocessSource"] = async (
+{
+  filename,
+  contents,
+  cache,
+  reporter,
+  store,
+  getNode,
+  actions: { deletePage, createPage }
+}: PreprocessSourceArgs, pluginOptions) => {
+  if (
+    !contents.includes("MaterialSymbol") ||
+    ![`.js`, `.jsx`, `.ts`, `.tsx`].includes(path.extname(filename))
+  ) {
+    return
+  }
+
+  // If we are in develop mode, we skip most of the optimizations we do in build mode
+  let getState = store.getState();
+  if (getState.program._[0] == "develop") {
+    const url = "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&family=Material+Symbols+Rounded&family=Material+Symbols+Sharp";
+    const filename = await fetchRemoteFile({url, cache, ext: ".css", name: "material-symbols"});
+
+    const cacheDir = path.join(__dirname, "..", ".cache");
+    if (!fs.existsSync(cacheDir)) {
+      fs.mkdirSync(cacheDir);
+    }
+    fs.copyFileSync(filename, path.join(cacheDir, "material-symbols.css"));
+    return;
+  }
+
+  const ast = babelParseToAst(contents, filename);
+  
+  const symbols = extractProps(ast, filename);
+  
+  let cachedIcons = await cache.get("gatsby-plugin-material-symbols");
+  if (cachedIcons === undefined) {
+    cachedIcons = {};
+  }
+
+  // We don't check if the icons are already in the cache
+  // because we want to remove them from the cache if they are not used anymore
+  cachedIcons[filename as string] = symbols;
+
+  await cache.set("gatsby-plugin-material-symbols", cachedIcons);
+
+  const node = getNode(`SitePage ${pathComponent[filename]}`);
+  deletePage(node as unknown as Page);
+  createPage({
+    ...node as unknown as Page,
+    context: {
+      MaterialSymbols: symbols
+    }
+  });
+
+  reporter.verbose(`gatsby-plugin-material-symbols: ${filename} processed`);
+}

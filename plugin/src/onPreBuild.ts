@@ -1,0 +1,204 @@
+import path from "path"
+import fs from "fs"
+
+import type { GatsbyNode } from "gatsby";
+
+import { fetchRemoteFile } from "gatsby-core-utils/fetch-remote-file";
+
+import type { MaterialSymbolProps } from "./component"
+
+import type { PluginOptions } from "gatsby"
+
+export const onPreBuild: GatsbyNode["onPreBuild"] = async ({ reporter, cache }, PluginOptions) => {
+  const pluginOptions = PluginOptions as typeof pluginOptions;
+  // Build CSS url
+  const cachedIcons = await cache.get("gatsby-plugin-material-symbols")
+  const symbolsObject = Object.values(cachedIcons).flat() as any[];
+
+  //const symbolsObject = cachedIcons["/workspaces/gatsby-plugin-material-symbols/site/src/pages/index.tsx"];
+
+  const symbols = symbolsObject.map(symbol => symbol.icon as string);
+  let symbolStyles = symbolsObject.filter(symbol => symbol.symbolStyle).map(symbol => symbol.symbolStyle as string);
+  if (pluginOptions.styles) {
+    pluginOptions.styles.outlined && symbolStyles.push("outlined");
+    pluginOptions.styles.rounded && symbolStyles.push("rounded");
+    pluginOptions.styles.sharp && symbolStyles.push("sharp");
+  }
+  symbolStyles = [...new Set(symbolStyles)];
+
+  let url: string = "https://fonts.googleapis.com/css2?family=";
+
+  // Subset font to only include the variable axes that are used
+  function variableFontSubset(style: MaterialSymbolProps["symbolStyle"]) {
+    let url: string = "";
+    /*const icons = symbols
+      .filter(symbol => symbol.symbolStyle === style)
+      .map(symbol => symbol.icon as string);*/
+    let fills = symbolsObject
+      .filter(symbol => symbol.symbolStyle === style && symbol.fill)
+      .map(symbol => symbol.fill as boolean);
+    let weights = symbolsObject
+      .filter(symbol => symbol.symbolStyle === style && symbol.weight)
+      .map(symbol => symbol.weight as number);
+    let grades = symbolsObject
+      .filter(symbol => symbol.symbolStyle === style && symbol.grade)
+      .map(symbol => symbol.grade as number);
+    let sizes = symbolsObject
+      .filter(symbol => symbol.symbolStyle === style && symbol.size)
+      .map(symbol => symbol.size as number);
+
+    if (pluginOptions.includeFill) {
+      fills = fills.concat(true);
+    }
+    if (pluginOptions.weightRange) {
+      weights = weights.concat(pluginOptions.weightRange as number[]);
+    }
+    if (pluginOptions.gradeRange) {
+      grades = grades.concat(pluginOptions.gradeRange as number[]);
+    }
+    if (pluginOptions.sizeRange) {
+      sizes = sizes.concat(pluginOptions.sizeRange as number[]);
+    }
+
+    if (fills?.length > 0 || weights?.length > 0 || grades?.length > 0 || sizes?.length > 0) {
+      const doFills = fills.length > 0;
+      const doWeights = weights.length > 0;
+      const doGrades = grades.length > 0;
+      const doSizes = sizes.length > 0;
+  
+      function smallestLargestValues(values: number[]) {
+        return `${Math.min(...values)}..${Math.max(...values)}`;
+      };
+
+      url += ":";
+  
+      // Specify which properties are being set
+      let properties: string[] = [];
+      doFills && properties.push("FILL");
+      doGrades && properties.push("GRAD");
+      doSizes && properties.push("opsz");
+      doWeights && properties.push("wght");
+      url += properties.join(",");
+  
+      url += "@";
+  
+      const hasTrueFill = fills.some(fill => fill === true);
+      const trueFillsOnly = fills.every(fill => fill === true);
+      // Specify the values of the properties
+      let values: string[] = [];
+      doFills && (() => {
+        if (trueFillsOnly) {
+          values.push("1");
+        } else if (hasTrueFill) {
+          values.push("1");
+        }
+      })();
+      doGrades && (() => {
+        if (grades.length === 1) {
+          if (grades[0] > 0) {
+            values.push(`0..${grades[0]}`);
+          } else if (grades[0] < 0) {
+            values.push(`${grades[0]}..0`);
+          }
+        } else {
+          return smallestLargestValues(grades);
+        }
+      })();
+      doSizes && (() => {
+        if (sizes.length === 1) {
+          if (sizes[0] > 24) {
+            values.push(`24..${sizes[0]}`);
+          } else if (sizes[0] < 24) {
+            values.push(`${sizes[0]}..24`);
+          }
+        } else {
+          return smallestLargestValues(sizes);
+        }
+      })();
+      doWeights && (() => {
+        if (weights.length === 1) {
+          if (weights[0] > 400) {
+            values.push(`400..${weights[0]}`);
+          } else if (weights[0] < 400) {
+            values.push(`${weights[0]}..400`);
+          }
+        } else {
+          values.push(smallestLargestValues(weights));
+        }
+      })();
+      url += values.join(",");
+    }
+
+    return url;
+  };
+
+  let families: string[] = [];
+  symbolStyles.includes("outlined") && families.push(`Material+Symbols+Outlined${variableFontSubset("outlined")}`);
+  symbolStyles.includes("rounded") && families.push(`Material+Symbols+Rounded${variableFontSubset("rounded")}`);
+  symbolStyles.includes("sharp") && families.push(`Material+Symbols+Sharp${variableFontSubset("sharp")}`);
+  url += families.join("&family=");
+
+
+  if (pluginOptions.extraIcons) {
+    if (Array.isArray(pluginOptions.extraIcons)) {
+      pluginOptions.extraIcons.forEach((icon: string) => {
+        if (!symbols.includes(icon)) {
+          symbols.push(icon);
+        }
+      });
+    } else {
+      (Object.values(pluginOptions.extraIcons) as string[][]).forEach((iconArray: string[]) => {
+        iconArray.forEach((icon: string) => {
+          if (!symbols.includes(icon)) {
+            symbols.push(icon);
+          }
+        });
+      });
+    }
+  }
+  symbols.sort();
+  url += "&icon_names=" + symbols.join(",");
+
+  // Subset the font to only include the icons that are used
+  url += "&display=block";
+
+  // Fetch the remote CSS
+  const filename = await fetchRemoteFile({ url, cache, ext: ".css", name: "material-symbols" });
+  reporter.verbose(`gatsby-plugin-material-symbols: Downloaded ${url} and saved to ${filename}`);
+  let cssFile
+  try {
+    cssFile = fs.readFileSync(filename).toString();
+  } catch (error) {
+    reporter.error(`gatsby-plugin-material-symbols: ${error}`);
+  }
+
+  let fontUrls: string[] = [];
+  if (pluginOptions.embedFonts) {
+    // Convert all font urls to an embedded base64 font
+    fontUrls = cssFile.match(/(?<=url\()[^)]+/g);
+    if (fontUrls) {
+      for (const fontUrl of fontUrls) {
+        const fontFilename = await fetchRemoteFile({ url: fontUrl, cache, ext: ".woff2", name: "material-symbols" });
+        const base64Font = fs.readFileSync(fontFilename).toString("base64");
+        cssFile = cssFile.replace(fontUrl, `data:font/woff2;base64,${base64Font}`);
+      }
+    }
+  }
+
+  // set font-size to inherit
+  cssFile = cssFile.replaceAll(/(?<=font-size: )24px(?=;)/g, "inherit")
+  
+  // Updaet the CSS file with changes
+  fs.writeFileSync(filename, cssFile);
+
+  // Write the CSS file to the plugin's cache
+  // This is done so that gatsby-browser can import the CSS automatically
+  const cacheDir = path.join(__dirname, "..", ".cache");
+  if (!fs.existsSync(cacheDir)) {
+    fs.mkdirSync(cacheDir);
+  }
+  const cacheFilePath = path.join(cacheDir, "material-symbols.css");
+  fs.writeFileSync(cacheFilePath, cssFile);
+
+  pluginOptions.verbose && reporter.info(`gatsby-plugin-material-symbols: Found ${symbols.length} symbols and wrote CSS ${pluginOptions.embedFonts && `with ${fontUrls.length} embedded fonts`} from ${url} to ${cacheFilePath}`);
+}

@@ -7,7 +7,15 @@ const config: GatsbyConfig = {
   },
   plugins: [
     // Load the plugin with its options
-    `plugin`,
+    {
+      resolve: `plugin`,
+      options: {
+        verbose: true,
+        extraIcons: [
+          "borg", // what the fuck is this icon for
+        ],
+      }
+    },
     `gatsby-plugin-image`,
     `gatsby-plugin-sharp`,
     `gatsby-transformer-sharp`,

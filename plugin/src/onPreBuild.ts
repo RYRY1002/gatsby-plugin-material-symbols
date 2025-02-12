@@ -163,7 +163,10 @@ export const onPreBuild: GatsbyNode["onPreBuild"] = async ({ reporter, cache }, 
   url += "&display=block";
 
   // Fetch the remote CSS
-  const filename = await fetchRemoteFile({ url, cache, ext: ".css", name: "material-symbols" });
+  const filename = await fetchRemoteFile({ url, cache, ext: ".css", name: "material-symbols", httpHeaders: {
+    // If we don't set a user agent, got's default user agent will be used, which Google doesn't see as supporting variable fonts
+    "user-agent": `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 Edg/134.0.0.0`,
+  } });
   reporter.verbose(`gatsby-plugin-material-symbols: Downloaded ${url} and saved to ${filename}`);
   let cssFile
   try {

@@ -147,14 +147,13 @@ export const preprocessSource: GatsbyNode["preprocessSource"] = async (
 }: PreprocessSourceArgs, pluginOptions) => {
   if (
     !contents.includes("MaterialSymbol") ||
-    ![`.js`, `.jsx`, `.ts`, `.tsx`].includes(path.extname(filename))
+    ![`.jsx`, `.tsx`].includes(path.extname(filename))
   ) {
     return
   }
 
   // If we are in develop mode, we skip most of the optimizations we do in build mode
-  let getState = store.getState();
-  if (getState.program._[0] == "develop") {
+  if (store.getState().program._[0] == "develop") {
     const url = "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&family=Material+Symbols+Rounded&family=Material+Symbols+Sharp";
     const filename = await fetchRemoteFile({url, cache, ext: ".css", name: "material-symbols"});
 
@@ -164,31 +163,31 @@ export const preprocessSource: GatsbyNode["preprocessSource"] = async (
     }
     fs.copyFileSync(filename, path.join(cacheDir, "material-symbols.css"));
     return;
-  }
-
-  const ast = babelParseToAst(contents, filename);
+  } else {
+    const ast = babelParseToAst(contents, filename);
   
-  const symbols = extractProps(ast, filename);
-  
-  let cachedIcons = await cache.get("gatsby-plugin-material-symbols");
-  if (cachedIcons === undefined) {
-    cachedIcons = {};
-  }
-
-  // We don't check if the icons are already in the cache
-  // because we want to remove them from the cache if they are not used anymore
-  cachedIcons[filename as string] = symbols;
-
-  await cache.set("gatsby-plugin-material-symbols", cachedIcons);
-
-  const node = getNode(`SitePage ${pathComponent[filename]}`);
-  deletePage(node as unknown as Page);
-  createPage({
-    ...node as unknown as Page,
-    context: {
-      MaterialSymbols: symbols
+    const symbols = extractProps(ast, filename);
+    
+    let cachedIcons = await cache.get("gatsby-plugin-material-symbols");
+    if (cachedIcons === undefined) {
+      cachedIcons = {};
     }
-  });
-
-  reporter.verbose(`gatsby-plugin-material-symbols: ${filename} processed`);
+  
+    // We don't check if the icons are already in the cache
+    // because we want to remove them from the cache if they are not used anymore
+    cachedIcons[filename as string] = symbols;
+  
+    await cache.set("gatsby-plugin-material-symbols", cachedIcons);
+  
+    /*const node = getNode(`SitePage ${pathComponent[filename]}`);
+    deletePage(node as unknown as Page);
+    createPage({
+      ...node as unknown as Page,
+      context: {
+        MaterialSymbols: symbols
+      }
+    });*/
+  
+    reporter.verbose(`gatsby-plugin-material-symbols: Statically analyzed ${filename} for Material Symbols, found ${symbols.length} symbols`);
+  }
 }

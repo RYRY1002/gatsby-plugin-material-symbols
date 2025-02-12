@@ -7,22 +7,32 @@ import { fetchRemoteFile } from "gatsby-core-utils/fetch-remote-file";
 
 import type { MaterialSymbolProps } from "./component"
 
-import type { PluginOptions } from "gatsby"
+import type { pluginOptions as PluginOptions } from "./gatsby-node";
 
-export const onPreBuild: GatsbyNode["onPreBuild"] = async ({ reporter, cache }, PluginOptions) => {
-  const pluginOptions = PluginOptions as typeof pluginOptions;
+// @ts-ignore
+export const onPreBuild: GatsbyNode["onPreBuild"] = async ({ reporter, cache }, PluginOptions: PluginOptions) => {
+  const pluginOptions = PluginOptions as PluginOptions;
+
+  pluginOptions.addSymbolsToPageContext && pluginOptions.verbose ? reporter.info(`gatsby-plugin-material-symbols: Adding symbols to page context`) : reporter.verbose(`gatsby-plugin-material-symbols: Adding symbols to page context`);
+
   // Build CSS url
   const cachedIcons = await cache.get("gatsby-plugin-material-symbols")
   const symbolsObject = Object.values(cachedIcons).flat() as any[];
 
-  //const symbolsObject = cachedIcons["/workspaces/gatsby-plugin-material-symbols/site/src/pages/index.tsx"];
-
   const symbols = symbolsObject.map(symbol => symbol.icon as string);
   let symbolStyles = symbolsObject.filter(symbol => symbol.symbolStyle).map(symbol => symbol.symbolStyle as string);
-  if (pluginOptions.styles) {
-    pluginOptions.styles.outlined && symbolStyles.push("outlined");
-    pluginOptions.styles.rounded && symbolStyles.push("rounded");
-    pluginOptions.styles.sharp && symbolStyles.push("sharp");
+  if (pluginOptions.extraStyles) {
+    if (Array.isArray(pluginOptions.extraStyles)) {
+      pluginOptions.extraStyles.forEach((style: string) => {
+        if (!symbolStyles.includes(style)) {
+          symbolStyles.push(style);
+        }
+      });
+    } else if (typeof pluginOptions.extraStyles === "object") {
+      pluginOptions.extraStyles.outlined && symbolStyles.push("outlined");
+      pluginOptions.extraStyles.rounded && symbolStyles.push("rounded");
+      pluginOptions.extraStyles.sharp && symbolStyles.push("sharp");
+    }
   }
   symbolStyles = [...new Set(symbolStyles)];
 
@@ -66,8 +76,8 @@ export const onPreBuild: GatsbyNode["onPreBuild"] = async ({ reporter, cache }, 
       const doGrades = grades.length > 0;
       const doSizes = sizes.length > 0;
   
-      function smallestLargestValues(values: number[]) {
-        return `${Math.min(...values)}..${Math.max(...values)}`;
+      function smallestLargestValues(values: number[], min?: number, max?: number) {
+        return `${min ? Math.min([min].push(...values)) : Math.min(...values)}..${max ? Math.max([max].push(...values)) : Math.max(...values)}`;
       };
 
       url += ":";
@@ -101,7 +111,7 @@ export const onPreBuild: GatsbyNode["onPreBuild"] = async ({ reporter, cache }, 
             values.push(`${grades[0]}..0`);
           }
         } else {
-          return smallestLargestValues(grades);
+          return smallestLargestValues(grades, -25, 200);
         }
       })();
       doSizes && (() => {
@@ -112,7 +122,7 @@ export const onPreBuild: GatsbyNode["onPreBuild"] = async ({ reporter, cache }, 
             values.push(`${sizes[0]}..24`);
           }
         } else {
-          return smallestLargestValues(sizes);
+          return smallestLargestValues(sizes, 5, 1200);
         }
       })();
       doWeights && (() => {
@@ -123,7 +133,7 @@ export const onPreBuild: GatsbyNode["onPreBuild"] = async ({ reporter, cache }, 
             values.push(`${weights[0]}..400`);
           }
         } else {
-          values.push(smallestLargestValues(weights));
+          values.push(smallestLargestValues(weights, 100, 700));
         }
       })();
       url += values.join(",");
@@ -188,10 +198,33 @@ export const onPreBuild: GatsbyNode["onPreBuild"] = async ({ reporter, cache }, 
     }
   }
 
-  // set font-size to inherit
-  cssFile = cssFile.replaceAll(/(?<=font-size: )24px(?=;)/g, "inherit")
+  // Replace default .material-symbols-{symbolStyle}
+  cssFile = cssFile.replace(/\.material-symbols-(outlined|rounded|sharp) {.*?$/gs, 
+`.material-symbol {
+  font-weight: normal;
+  font-style: normal;
+  font-size: inherit;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+}
+
+.material-symbol.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+}
+.material-symbol.material-symbols-rounded {
+  font-family: 'Material Symbols Rounded';
+}
+.material-symbol.material-symbols-sharp {
+  font-family: 'Material Symbols Sharp';
+}`)
   
-  // Updaet the CSS file with changes
+  // Update the CSS file with changes
   fs.writeFileSync(filename, cssFile);
 
   // Write the CSS file to the plugin's cache
@@ -203,5 +236,7 @@ export const onPreBuild: GatsbyNode["onPreBuild"] = async ({ reporter, cache }, 
   const cacheFilePath = path.join(cacheDir, "material-symbols.css");
   fs.writeFileSync(cacheFilePath, cssFile);
 
-  pluginOptions.verbose && reporter.info(`gatsby-plugin-material-symbols: Found ${symbols.length} symbols and wrote CSS ${pluginOptions.embedFonts && `with ${fontUrls.length} embedded fonts`} from ${url} to ${cacheFilePath}`);
+  pluginOptions.verbose
+  ? reporter.info(`gatsby-plugin-material-symbols: Found ${symbols.length} symbols and wrote CSS ${pluginOptions.embedFonts && `with ${fontUrls.length} embedded fonts`} from ${url} to ${cacheFilePath}`)
+  : reporter.verbose(`gatsby-plugin-material-symbols: Found ${symbols.length} symbols and wrote CSS ${pluginOptions.embedFonts && `with ${fontUrls.length} embedded fonts`} from ${url} to ${cacheFilePath}`);
 }

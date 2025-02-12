@@ -179,15 +179,19 @@ export const preprocessSource: GatsbyNode["preprocessSource"] = async (
   
     await cache.set("gatsby-plugin-material-symbols", cachedIcons);
   
-    /*const node = getNode(`SitePage ${pathComponent[filename]}`);
-    deletePage(node as unknown as Page);
-    createPage({
-      ...node as unknown as Page,
-      context: {
-        MaterialSymbols: symbols
-      }
-    });*/
+    if (pluginOptions.addSymbolsToPageContext) {
+      const node = getNode(`SitePage ${pathComponent[filename]}`);
+      deletePage(node as unknown as Page);
+      createPage({
+        ...node as unknown as Page,
+        context: {
+          MaterialSymbols: symbols
+        }
+      });
+    }
   
-    reporter.verbose(`gatsby-plugin-material-symbols: Statically analyzed ${filename} for Material Symbols, found ${symbols.length} symbols`);
+    pluginOptions.verbose
+    ? reporter.info(`gatsby-plugin-material-symbols: Statically analyzed ${filename} for Material Symbols, found ${symbols.length} symbols`)
+    : reporter.verbose(`gatsby-plugin-material-symbols: Statically analyzed ${filename} for Material Symbols, found ${symbols.length} symbols`);
   }
 }

@@ -1,15 +1,14 @@
 {
-  "name": "plugin",
-  "version": "0.0.0",
-  "private": true,
+  "name": "gatsby-plugin-material-symbols",
+  "version": "1.0.0",
   "description": "Easily add Material Symbols to your Gatsby site, with various Gatsby-specific performance optimizations built-in.",
   "license": "MIT",
   "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "files": [
     "./dist/*",
-    "gatsby-node.js",
-    "gatsby-browser.js",
-    "gatsby-ssr.tsx"
+    "./gatsby-node.js",
+    "./gatsby-browser.js"
   ],
   "scripts": {
     "clean": "del-cli dist .cache",
@@ -34,7 +33,7 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "gatsby-core-utils": "^4.14.0",
+    "gatsby-core-utils": ">=4.14.0",
     "node-fetch": "^2.6.8"
   },
   "devDependencies": {
@@ -44,5 +43,10 @@
   },
   "peerDependencies": {
     "gatsby": ">=5.14.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RYRY1002/gatsby-plugin-material-symbols.git",
+    "directory": "plugin"
   }
 }

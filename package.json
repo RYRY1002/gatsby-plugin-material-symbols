@@ -1,20 +1,17 @@
 {
-  "name": "gatsby-plugin-material-symbols",
-  "version": "0.0.0",
   "private": true,
   "author": "RYRY1002 <riley@riley.technology> (https://links.riley.technology)",
-  "description": "Easily add Material Symbols to your Gatsby site, with various Gatsby-specific performance optimizations built-in.",
   "workspaces": [
     "plugin",
     "site"
   ],
   "scripts": {
-    "develop:plugin": "yarn workspace plugin develop",
-    "plugin:develop": "yarn workspace plugin develop",
+    "develop:plugin": "yarn workspace gatsby-plugin-material-symbols develop",
+    "plugin:develop": "yarn workspace gatsby-plugin-material-symbols develop",
     "develop:site": "yarn workspace site develop",
     "site:develop": "yarn workspace site develop",
-    "build:plugin": "yarn workspace plugin build",
-    "plugin:build": "yarn workspace plugin build",
+    "build:plugin": "yarn workspace gatsby-plugin-material-symbols build",
+    "plugin:build": "yarn workspace gatsby-plugin-material-symbols build",
     "build:site": "yarn workspace site build",
     "site:build": "yarn workspace site build",
     "build": "npm-run-all -s 'build:plugin' 'build:site'",
@@ -22,10 +19,10 @@
     "serve:site": "yarn workspace site serve",
     "lint": "eslint . --ext .ts,.tsx,.js",
     "lint:fix": "yarn lint --fix",
-    "test": "yarn workspace plugin test",
+    "test": "yarn workspace gatsby-plugin-material-symbols test",
     "clean": "npm-run-all -p clean:plugin clean:site",
-    "clean:plugin": "yarn workspace plugin clean",
-    "plugin:clean": "yarn workspace plugin clean",
+    "clean:plugin": "yarn workspace gatsby-plugin-material-symbols clean",
+    "plugin:clean": "yarn workspace gatsby-plugin-material-symbols clean",
     "clean:site": "yarn workspace site clean",
     "site:clean": "yarn workspace site clean"
   },

@@ -2,7 +2,6 @@
   "private": true,
   "name": "site",
   "description": "Test site for testing gatsby-plugin-material-symbols",
-  "version": "1.0.0",
   "license": "MIT",
   "scripts": {
     "clean": "gatsby clean",

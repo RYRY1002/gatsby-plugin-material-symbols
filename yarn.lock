@@ -7390,7 +7390,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gatsby-core-utils@npm:^4.14.0":
+"gatsby-core-utils@npm:>=4.14.0, gatsby-core-utils@npm:^4.14.0":
   version: 4.14.0
   resolution: "gatsby-core-utils@npm:4.14.0"
   dependencies:
@@ -7518,17 +7518,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gatsby-plugin-material-symbols@workspace:.":
+"gatsby-plugin-material-symbols@workspace:plugin":
   version: 0.0.0-use.local
-  resolution: "gatsby-plugin-material-symbols@workspace:."
+  resolution: "gatsby-plugin-material-symbols@workspace:plugin"
   dependencies:
-    "@typescript-eslint/eslint-plugin": ^5.49.0
-    "@typescript-eslint/parser": ^5.49.0
-    eslint: ^8.32.0
-    eslint-config-prettier: ^8.6.0
-    eslint-plugin-prettier: ^4.2.1
-    npm-run-all: ^4.1.5
-    prettier: ^2.8.3
+    del-cli: ^5.0.0
+    gatsby: ^5.14.0
+    gatsby-core-utils: ">=4.14.0"
+    node-fetch: ^2.6.8
+    typescript: ^5.7.2
+  peerDependencies:
+    gatsby: ">=5.14.0"
   languageName: unknown
   linkType: soft
 
@@ -11253,20 +11253,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"plugin@workspace:plugin":
-  version: 0.0.0-use.local
-  resolution: "plugin@workspace:plugin"
-  dependencies:
-    del-cli: ^5.0.0
-    gatsby: ^5.14.0
-    gatsby-core-utils: ^4.14.0
-    node-fetch: ^2.6.8
-    typescript: ^5.7.2
-  peerDependencies:
-    gatsby: ">=5.14.0"
-  languageName: unknown
-  linkType: soft
-
 "possible-typed-array-names@npm:^1.0.0":
   version: 1.0.0
   resolution: "possible-typed-array-names@npm:1.0.0"
@@ -12544,6 +12530,20 @@ __metadata:
   checksum: 50e27388dd2b3fa6677385fc1e2966e9157c89c86853b96d02e6915663a96b7ff4d590e14f6f70e90f9b554093aa5dbc05ac3012876be558c06a65437337bc05
   languageName: node
   linkType: hard
+
+"root-workspace-0b6124@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "root-workspace-0b6124@workspace:."
+  dependencies:
+    "@typescript-eslint/eslint-plugin": ^5.49.0
+    "@typescript-eslint/parser": ^5.49.0
+    eslint: ^8.32.0
+    eslint-config-prettier: ^8.6.0
+    eslint-plugin-prettier: ^4.2.1
+    npm-run-all: ^4.1.5
+    prettier: ^2.8.3
+  languageName: unknown
+  linkType: soft
 
 "run-async@npm:^2.4.0":
   version: 2.4.1

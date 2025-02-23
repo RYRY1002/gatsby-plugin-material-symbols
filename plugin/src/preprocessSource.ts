@@ -135,6 +135,8 @@ export const onCreatePage: GatsbyNode["onCreatePage"] = async ({ page }) => {
   pathComponent[page.component] = page.path;
 }
 
+export let staticAnalysisCache = {};
+
 export const preprocessSource: GatsbyNode["preprocessSource"] = async (
 {
   filename,
@@ -167,17 +169,10 @@ export const preprocessSource: GatsbyNode["preprocessSource"] = async (
     const ast = babelParseToAst(contents, filename);
   
     const symbols = extractProps(ast, filename);
-    
-    let cachedIcons = await cache.get("gatsby-plugin-material-symbols");
-    if (cachedIcons === undefined) {
-      cachedIcons = {};
-    }
   
     // We don't check if the icons are already in the cache
     // because we want to remove them from the cache if they are not used anymore
-    cachedIcons[filename as string] = symbols;
-  
-    await cache.set("gatsby-plugin-material-symbols", cachedIcons);
+    staticAnalysisCache[filename as string] = symbols;
   
     if (pluginOptions.addSymbolsToPageContext) {
       const node = getNode(`SitePage ${pathComponent[filename]}`);

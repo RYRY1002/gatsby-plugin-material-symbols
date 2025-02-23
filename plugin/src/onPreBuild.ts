@@ -9,6 +9,8 @@ import type { MaterialSymbolProps } from "./component"
 
 import type { pluginOptions as PluginOptions } from "./gatsby-node";
 
+import { staticAnalysisCache } from "./preprocessSource";
+
 // @ts-ignore
 export const onPreBuild: GatsbyNode["onPreBuild"] = async ({ reporter, cache }, PluginOptions: PluginOptions) => {
   const pluginOptions = PluginOptions as PluginOptions;
@@ -16,8 +18,7 @@ export const onPreBuild: GatsbyNode["onPreBuild"] = async ({ reporter, cache }, 
   pluginOptions.addSymbolsToPageContext && pluginOptions.verbose ? reporter.info(`gatsby-plugin-material-symbols: Adding symbols to page context`) : reporter.verbose(`gatsby-plugin-material-symbols: Adding symbols to page context`);
 
   // Build CSS url
-  const cachedIcons = await cache.get("gatsby-plugin-material-symbols")
-  const symbolsObject = Object.values(cachedIcons).flat() as any[];
+  const symbolsObject = Object.values(staticAnalysisCache).flat() as any[];
 
   const symbols = symbolsObject.map(symbol => symbol.icon as string);
   let symbolStyles = symbolsObject.filter(symbol => symbol.symbolStyle).map(symbol => symbol.symbolStyle as string);
@@ -57,37 +58,39 @@ export const onPreBuild: GatsbyNode["onPreBuild"] = async ({ reporter, cache }, 
       .filter(symbol => symbol.symbolStyle === style && symbol.size)
       .map(symbol => symbol.size as number);
 
-    if (pluginOptions.includeFill) {
-      fills = fills.concat(true);
+    if (pluginOptions.sizeRange) {
+      sizes = sizes.concat(pluginOptions.sizeRange as number[]);
     }
     if (pluginOptions.weightRange) {
       weights = weights.concat(pluginOptions.weightRange as number[]);
     }
+    if (pluginOptions.includeFill) {
+      fills = fills.concat(true);
+    }
     if (pluginOptions.gradeRange) {
       grades = grades.concat(pluginOptions.gradeRange as number[]);
     }
-    if (pluginOptions.sizeRange) {
-      sizes = sizes.concat(pluginOptions.sizeRange as number[]);
-    }
 
-    if (fills?.length > 0 || weights?.length > 0 || grades?.length > 0 || sizes?.length > 0) {
-      const doFills = fills.length > 0;
-      const doWeights = weights.length > 0;
-      const doGrades = grades.length > 0;
+    if (sizes?.length > 0 || weights?.length > 0 || fills?.length > 0 || grades?.length > 0) {
       const doSizes = sizes.length > 0;
+      const doWeights = weights.length > 0;
+      const doFills = fills.length > 0;
+      const doGrades = grades.length > 0;
   
       function smallestLargestValues(values: number[], min?: number, max?: number) {
-        return `${min ? Math.min([min].push(...values)) : Math.min(...values)}..${max ? Math.max([max].push(...values)) : Math.max(...values)}`;
+        const minValue = Math.min(...values);
+        const maxValue = Math.max(...values);
+        return `${min ? Math.max(min, minValue) : minValue}..${max ? Math.min(max, maxValue) : maxValue}`;
       };
 
       url += ":";
   
       // Specify which properties are being set
       let properties: string[] = [];
-      doFills && properties.push("FILL");
-      doGrades && properties.push("GRAD");
       doSizes && properties.push("opsz");
       doWeights && properties.push("wght");
+      doFills && properties.push("FILL");
+      doGrades && properties.push("GRAD");
       url += properties.join(",");
   
       url += "@";
@@ -96,6 +99,32 @@ export const onPreBuild: GatsbyNode["onPreBuild"] = async ({ reporter, cache }, 
       const trueFillsOnly = fills.every(fill => fill === true);
       // Specify the values of the properties
       let values: string[] = [];
+      doSizes && (() => {
+        if (sizes.length === 1) {
+          if (sizes[0] > 24) {
+            values.push(`24..${sizes[0]}`);
+          } else if (sizes[0] < 24) {
+            values.push(`${sizes[0]}..24`);
+          }
+        } else if (sizes.every(size => size === sizes[0])) {
+          values.push(`${sizes[0]}`);
+        } else {
+          values.push(smallestLargestValues(sizes, 5, 1200));
+        }
+      })();
+      doWeights && (() => {
+        if (weights.length === 1) {
+          if (weights[0] > 400) {
+            values.push(`400..${weights[0]}`);
+          } else if (weights[0] < 400) {
+            values.push(`${weights[0]}..400`);
+          }
+        } else if (weights.every(weight => weight === weights[0])) {
+          values.push(`${weights[0]}`);
+        } else {
+          values.push(smallestLargestValues(weights, 100, 700));
+        }
+      })();
       doFills && (() => {
         if (trueFillsOnly) {
           values.push("1");
@@ -110,30 +139,10 @@ export const onPreBuild: GatsbyNode["onPreBuild"] = async ({ reporter, cache }, 
           } else if (grades[0] < 0) {
             values.push(`${grades[0]}..0`);
           }
+        } else if (grades.every(grade => grade === grades[0])) {
+          values.push(`${grades[0]}`);
         } else {
-          return smallestLargestValues(grades, -25, 200);
-        }
-      })();
-      doSizes && (() => {
-        if (sizes.length === 1) {
-          if (sizes[0] > 24) {
-            values.push(`24..${sizes[0]}`);
-          } else if (sizes[0] < 24) {
-            values.push(`${sizes[0]}..24`);
-          }
-        } else {
-          return smallestLargestValues(sizes, 5, 1200);
-        }
-      })();
-      doWeights && (() => {
-        if (weights.length === 1) {
-          if (weights[0] > 400) {
-            values.push(`400..${weights[0]}`);
-          } else if (weights[0] < 400) {
-            values.push(`${weights[0]}..400`);
-          }
-        } else {
-          values.push(smallestLargestValues(weights, 100, 700));
+          values.push(smallestLargestValues(grades, -25, 200));
         }
       })();
       url += values.join(",");

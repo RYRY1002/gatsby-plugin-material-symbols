@@ -25,6 +25,60 @@ Behind the scenes, the plugin performs several optimizations at build-time to ma
 	}
 	```
 
+## Component props
+### `symbol`
+Which symbol you'd like to use.
+- **Default**: `undefined` (must be defined)
+
+> [!TIP]
+> Want to find symbols to use? See the [Material Symbols catalogue](https://fonts.google.com/icons) website. Look for a codepoint once you've found the symbol you want to use.
+
+### `fill`
+Should the symbol be filled?
+- **Default**: `false`
+- **Accepted types**:
+	- `true`: The symbol is filled
+	- `false`: The symbol is not filled (hollow)
+
+### `weight`
+The weight (at least initially) of the symbol.
+- **Default**: `400`
+- **Accepted types**:
+	- `MaterialSymbolWeight`: A weight
+
+### `grade`
+The grade (at least initally) of the symbol.
+- **Default**: `0`
+- **Accepted types**:
+	- `MaterialSymbolGrade`: A grade
+
+### `size`
+The size (at least initially) of the symbol.
+- **Default**: `inherit`
+- **Accepted types**:
+	- `number`: A size
+
+### `symbolStyle`
+Which style the symbol should be.
+- **Default**: `'outlined'`
+- **Accepted types**:
+	- `'outlined'`: The outlined style
+	- `'rounded'`: The rounded style
+	- `'sharp'`: The sharp style
+
+> [!TIP]
+> Curious about what each style looks like? You can see on the [Material Design website](https://m3.material.io/styles/icons/applying-icons#06499df4-5998-4724-bea1-8d87327fde70) or on the [Material Symbols catalogue](https://fonts.google.com/icons) if you prefer.
+
+### `removeInlineStyles`
+Whether or not to remove variable font axes being set per element in the `style` tag.
+- **Deafult**: `false`
+- **Accepted types**:
+	- `true`: Inline styles are removed. You will have to apply the variable font axes yourself
+	- `false`: Specified variable font axes are set per element via the `style` tag
+
+> [!TIP]
+> All Material Symbols have 2 classes you can use to style them by default: `material-symbol` and `material-symbol-{symbolStyle}`, as well as any others you choose to pass.
+
 ## Options
 ### `embedFonts`
 Whether to embed the font file(s) into the site's CSS as base64.

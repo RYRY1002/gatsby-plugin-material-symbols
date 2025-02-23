@@ -17,8 +17,8 @@ function combineClasses(...classes: Classes): string {
 }
 
 export type MaterialSymbolProps = {
-	/** Required. The name of the icon to render. */
-	icon: MaterialSymbolCodepoints;
+	/** Required. The name of the symbol to render. */
+	symbol: MaterialSymbolCodepoints;
 
 	/** Default `false`.
 	 *
@@ -65,7 +65,7 @@ export type PolymorphicMaterialSymbolProps<C extends ElementType> = PolymorphicC
 export const MaterialSymbol = forwardRef<HTMLElement, PolymorphicMaterialSymbolProps<ElementType>>(
 	(
 		{
-			icon,
+			symbol,
 			fill = false,
 			weight,
 			grade,
@@ -116,7 +116,7 @@ export const MaterialSymbol = forwardRef<HTMLElement, PolymorphicMaterialSymbolP
 				onClick={onClick}
 				className={combineClasses(symbolStyleClass, className)}
 			>
-				{icon}
+				{symbol}
 			</Component>
 		);
 	}

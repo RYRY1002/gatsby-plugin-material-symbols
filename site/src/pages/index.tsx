@@ -1,6 +1,6 @@
 import * as React from "react"
 import { HeadFC, PageProps } from "gatsby"
-import { MaterialSymbol } from "plugin"
+import { MaterialSymbol } from "gatsby-plugin-material-symbols"
 
 export default function IndexPage({ data }: PageProps<any>): React.ReactElement {
   return (

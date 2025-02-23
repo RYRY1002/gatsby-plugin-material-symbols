@@ -8,7 +8,7 @@ const config: GatsbyConfig = {
   plugins: [
     // Load the plugin with its options
     {
-      resolve: `plugin`,
+      resolve: `gatsby-plugin-material-symbols`,
       options: {
         verbose: true,
         extraIcons: [

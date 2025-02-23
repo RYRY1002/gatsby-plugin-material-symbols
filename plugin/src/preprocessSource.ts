@@ -87,11 +87,11 @@ const extractProps = (
     JSXOpeningElement(nodePath: NodePath<JSXOpeningElement>) {
       // Is this a MaterialSymbol?
       let name = nodePath.get("name");
-      let nameReferencesImport = nodePath.get("name").referencesImport("plugin", "MaterialSymbol");
+      let nameReferencesImport = nodePath.get("name").referencesImport("gatsby-plugin-material-symbols", "MaterialSymbol");
       if (
         !nodePath
           .get("name")
-          .referencesImport("plugin", "MaterialSymbol")
+          .referencesImport("gatsby-plugin-material-symbols", "MaterialSymbol")
       ) {
         return;
       };

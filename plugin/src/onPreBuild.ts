@@ -107,7 +107,7 @@ export const onPreBuild: GatsbyNode["onPreBuild"] = async ({ reporter, cache }, 
         } else if (sizes.every(size => size === sizes[0])) {
           values.push(`${sizes[0]}`);
         } else {
-          values.push(smallestLargestValues(sizes, 5, 1200));
+          values.push(smallestLargestValues(sizes, 20, 1200));
         }
       })();
       doWeights && (() => {

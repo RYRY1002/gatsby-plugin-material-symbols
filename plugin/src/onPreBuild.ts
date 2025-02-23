@@ -15,8 +15,6 @@ import { staticAnalysisCache } from "./preprocessSource";
 export const onPreBuild: GatsbyNode["onPreBuild"] = async ({ reporter, cache }, PluginOptions: PluginOptions) => {
   const pluginOptions = PluginOptions as PluginOptions;
 
-  pluginOptions.addSymbolsToPageContext && pluginOptions.verbose ? reporter.info(`gatsby-plugin-material-symbols: Adding symbols to page context`) : reporter.verbose(`gatsby-plugin-material-symbols: Adding symbols to page context`);
-
   // Build CSS url
   const symbolsObject = Object.values(staticAnalysisCache).flat() as any[];
 

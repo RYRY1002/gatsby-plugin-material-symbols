@@ -36,10 +36,6 @@ export const pluginOptionsSchema: GatsbyNode["pluginOptionsSchema"] = ({ Joi }) 
       .any()
       .default([])
       .description("A list of styles to always add to the font file, even if they are not found during static analysis.\nThis is useful if you change the style to something that might not be caught during static analysis.\nValid styles are 'outlined', 'rounded', and 'sharp'."),
-    addSymbolsToPageContext: Joi
-      .boolean()
-      .default(true)
-      .description("When true, the symbols that were found during static analysis will be added to the page's context.\nThis does not affect the functionality of the plugin."),
     verbose: Joi
       .boolean()
       .default(false)
@@ -118,13 +114,6 @@ export type pluginOptions = {
     rounded?: boolean;
     sharp?: boolean;
   };
-  /** Default `true`
-   * 
-   * @property `true`: the symbols that were found during static analysis will be added to the page's context.
-   * 
-   * @note This does not affect the functionality of the plugin.
-   */
-  addSymbolsToPageContext?: boolean;
   /** Default `false`
    * 
    * @property `true`: writes extra information to the console.

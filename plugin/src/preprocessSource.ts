@@ -129,12 +129,6 @@ const MATERIALSYMBOL_PROPS = new Set([
   "onClick"
 ]);
 
-let pathComponent: Record<string, string> = {};
-
-export const onCreatePage: GatsbyNode["onCreatePage"] = async ({ page }) => {
-  pathComponent[page.component] = page.path;
-}
-
 export let staticAnalysisCache = {};
 
 export const preprocessSource: GatsbyNode["preprocessSource"] = async (
@@ -173,17 +167,6 @@ export const preprocessSource: GatsbyNode["preprocessSource"] = async (
     // We don't check if the icons are already in the cache
     // because we want to remove them from the cache if they are not used anymore
     staticAnalysisCache[filename as string] = symbols;
-  
-    if (pluginOptions.addSymbolsToPageContext) {
-      const node = getNode(`SitePage ${pathComponent[filename]}`);
-      deletePage(node as unknown as Page);
-      createPage({
-        ...node as unknown as Page,
-        context: {
-          MaterialSymbols: symbols
-        }
-      });
-    }
   
     pluginOptions.verbose
     ? reporter.info(`gatsby-plugin-material-symbols: Statically analyzed ${filename} for Material Symbols, found ${symbols.length} symbols`)

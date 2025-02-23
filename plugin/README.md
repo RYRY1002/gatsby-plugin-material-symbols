@@ -78,13 +78,6 @@ A list of additional styles to always include, even if they are found during sta
 > [!TIP]
 > Curious about what each style looks like? You can see on the [Material Design website](https://m3.material.io/styles/icons/applying-icons#06499df4-5998-4724-bea1-8d87327fde70) or on the [Material Symbols catalogue](https://fonts.google.com/icons) if you prefer.
 
-### `addSymbolsToPageContext`
-Whether or not to add the icons that were found during static analysis to the respective page's page context, which can be queried using GraphQL.
-- **Default**: `true`
-- **Accepted types**:
-	- `true`: Add symbols found during static analysis to the page's page context
-	- `false`: Do not add anything to the page's page context
-
 ### `verbose`
 Prints useful or interesting information to the console.
 - **Default**: `false`

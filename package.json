@@ -24,7 +24,8 @@
     "clean:plugin": "yarn workspace gatsby-plugin-material-symbols clean",
     "plugin:clean": "yarn workspace gatsby-plugin-material-symbols clean",
     "clean:site": "yarn workspace site clean",
-    "site:clean": "yarn workspace site clean"
+    "site:clean": "yarn workspace site clean",
+    "preload-fonts": "yarn workspace site run preload-fonts"
   },
   "license": "MIT",
   "devDependencies": {

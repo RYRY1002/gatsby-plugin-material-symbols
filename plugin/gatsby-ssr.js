@@ -1,0 +1,1 @@
+module.exports.onPreRenderHTML = require("./dist/onPreRenderHTML").onPreRenderHTML;

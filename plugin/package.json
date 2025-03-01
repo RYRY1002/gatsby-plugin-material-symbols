@@ -1,6 +1,6 @@
 {
   "name": "gatsby-plugin-material-symbols",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Easily add Material Symbols to your Gatsby site, with various Gatsby-specific performance optimizations built-in.",
   "license": "MIT",
   "main": "./dist/index.js",
@@ -8,7 +8,8 @@
   "files": [
     "./dist/*",
     "./gatsby-node.js",
-    "./gatsby-browser.js"
+    "./gatsby-browser.js",
+    "./gatsby-ssr.js"
   ],
   "scripts": {
     "clean": "del-cli dist .cache",

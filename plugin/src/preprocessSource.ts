@@ -117,7 +117,7 @@ const extractProps = (
 };
 
 const MATERIALSYMBOL_PROPS = new Set([
-  "icon",
+  "symbol",
   "fill",
   "weight",
   "grade",

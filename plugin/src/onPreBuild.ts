@@ -18,7 +18,7 @@ export const onPreBuild: GatsbyNode["onPreBuild"] = async ({ reporter, cache }, 
   // Build CSS url
   const symbolsObject = Object.values(staticAnalysisCache).flat() as any[];
 
-  let symbols = symbolsObject.map(symbol => symbol.icon as string);
+  let symbols = symbolsObject.map(symbol => symbol.symbol as string);
   let symbolStyles = symbolsObject.filter(symbol => symbol.symbolStyle).map(symbol => symbol.symbolStyle as string);
   if (pluginOptions.extraStyles) {
     if (Array.isArray(pluginOptions.extraStyles)) {

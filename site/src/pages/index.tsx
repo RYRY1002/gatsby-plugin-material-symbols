@@ -7,9 +7,9 @@ export default function IndexPage({ data }: PageProps<any>): React.ReactElement 
     <main>
       <h1>All posts</h1>
       <section className="posts-grid">Posts will go here</section>
-      <MaterialSymbol icon="home"/>
-      <MaterialSymbol icon="settings" weight={700}/>
-      <MaterialSymbol icon="pinch" symbolStyle="rounded"/>
+      <MaterialSymbol symbol="home"/>
+      <MaterialSymbol symbol="settings" weight={700}/>
+      <MaterialSymbol symbol="pinch" symbolStyle="rounded"/>
     </main>
   )
 }

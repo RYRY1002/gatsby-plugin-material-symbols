@@ -150,7 +150,7 @@ export const preprocessSource: GatsbyNode["preprocessSource"] = async (
 
   // If we are in develop mode, we skip most of the optimizations we do in build mode
   if (store.getState().program._[0] == "develop") {
-    const url = "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&family=Material+Symbols+Rounded&family=Material+Symbols+Sharp";
+    const url = "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-25..200&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-25..200&family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-25..200";
     const filename = await fetchRemoteFile({url, cache, ext: ".css", name: "material-symbols"});
 
     const cacheDir = path.join(__dirname, "..", ".cache");
